@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Cartas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="welcome-page">
+            <h1>Bem-vindo ao Jogo de Cartas</h1>
+            <button onclick="startGame()">Iniciar Jogo</button>
+        </div>
+        
+        <div id="game-page" style="display: none;">
+            <button onclick="selectPlayers()">Selecionar Jogadores</button>
+            <h2>Registro de Jogadores</h2>
+            <ul id="player-list"></ul>
+
+            <h2>Tabela de Pontuações</h2>
+            <table id="score-table">
+                <!-- Tabela será preenchida dinamicamente com JavaScript -->
+            </table>
+
+            <h2>Palpites</h2>
+            <table id="guess-table">
+                <!-- Tabela de palpites será preenchida dinamicamente com JavaScript -->
+            </table>
+
+            <!-- Botões dinâmicos -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
