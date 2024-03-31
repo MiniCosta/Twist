@@ -119,7 +119,7 @@ function finishRound() {
 
             // Atualizar a tabela de pontuações
             const cell = document.getElementById(`${players[currentPlayerIndex].name}-round-${currentRound}`);
-            cell.textContent = roundScore;
+            cell.textContent = roundScore+10;
 
             const totalCell = document.getElementById(`${players[currentPlayerIndex].name}-total`);
             totalCell.textContent = players[currentPlayerIndex].score;
