@@ -2,6 +2,7 @@ let players = [];
 let rounds = 0;
 let currentRound = 1;
 let gamePage;
+let firstPlayerIndex = 0; // Variável para acompanhar o primeiro jogador
 
 function startGame() {
     const welcomePage = document.getElementById('welcome-page');
@@ -9,6 +10,10 @@ function startGame() {
     welcomePage.style.display = 'none';
     gamePage.style.display = 'block';
 }
+// function chooseFirstPlayer() {
+//     const randomIndex = Math.floor(Math.random() * players.length);
+//     alert(`O primeiro jogador é: ${players[firstPlayerIndex].name}`);
+// }
 
 function selectPlayers() {
     const playerList = document.getElementById('player-list');
@@ -64,21 +69,19 @@ function selectPlayers() {
 
 function startRound() {
     if (currentRound <= rounds) {
-        // Adicionar uma linha temporária para os palpites
+        // Atualizar o índice do primeiro jogador para a próxima rodada
+        firstPlayerIndex = (firstPlayerIndex + 1) % players.length;
+
+        // Adicionar uma linha temporária para os palpites e checkboxes
         const guessTable = document.getElementById('guess-table');
         const guessRow = document.createElement('tr');
-        guessRow.innerHTML = `<td>Rodada ${currentRound}</td>` + players.map(player => `<td id="${player.name}-guess-${currentRound}"></td>`).join('');
+        guessRow.innerHTML = `<td>Rodada ${currentRound}</td>` + players.map(player => `
+            <td id="${player.name}-guess-${currentRound}"></td>
+            <td>
+                <input type="number" id="${player.name}-input-${currentRound}" placeholder="Palpite" />
+                <input type="checkbox" id="${player.name}-result-${currentRound}" /> Acertou
+            </td>`).join('');
         guessTable.appendChild(guessRow);
-
-        for (let i = 0; i < players.length; i++) {
-            const guess = parseInt(prompt(`${players[i].name}, digite seu palpite para a rodada ${currentRound} (entre 0 e ${currentRound}):`));
-            players[i].guesses.push(guess);
-
-            // Atualizar a tabela de palpites
-            const guessCell = document.getElementById(`${players[i].name}-guess-${currentRound}`);
-            const previousGuesses = players[i].guesses.slice(0, currentRound);
-            guessCell.textContent = previousGuesses.join(', ');
-        }
 
         updateTable();
 
@@ -103,24 +106,26 @@ function startRound() {
 function finishRound() {
     if (currentRound <= rounds) {
         for (let i = 0; i < players.length; i++) {
-            // Obter a pontuação da rodada
-            const roundScore = parseInt(prompt(`${players[i].name}, digite sua pontuação para a rodada ${currentRound}:`));
-            if (isNaN(roundScore)) {
-                alert('Valor inválido. Por favor, digite um número.');
-                return;
-            }
+            const currentPlayerIndex = (firstPlayerIndex + i) % players.length; // Use o índice ajustado
+            const guessInput = document.getElementById(`${players[currentPlayerIndex].name}-input-${currentRound}`);
+            const resultCheckbox = document.getElementById(`${players[currentPlayerIndex].name}-result-${currentRound}`);
 
-            players[i].score += roundScore;
+            const guess = parseInt(guessInput.value) || 0;
+            const isCorrect = resultCheckbox.checked;
+
+            const roundScore = isCorrect ? 10 + guess : 0;
+
+            players[currentPlayerIndex].score += roundScore;
 
             // Atualizar a tabela de pontuações
-            const cell = document.getElementById(`${players[i].name}-round-${currentRound}`);
+            const cell = document.getElementById(`${players[currentPlayerIndex].name}-round-${currentRound}`);
             cell.textContent = roundScore;
 
-            const totalCell = document.getElementById(`${players[i].name}-total`);
-            totalCell.textContent = players[i].score;
+            const totalCell = document.getElementById(`${players[currentPlayerIndex].name}-total`);
+            totalCell.textContent = players[currentPlayerIndex].score;
         }
 
-        // Limpar tabela de palpites
+        // Limpar tabela de palpites e checkboxes
         const guessTable = document.getElementById('guess-table');
         guessTable.innerHTML = '';
 
@@ -140,7 +145,6 @@ function finishRound() {
         }
 
         currentRound++;
-        //resetGuesses();
     } else {
         alert('Todas as rodadas foram concluídas. Clique em "Calcular Vencedor" para determinar o vencedor.');
     }
